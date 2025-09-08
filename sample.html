@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.5, maximum-scale=3.0" />
+    <title>ジェノグラム作成ツール</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="input-panel">
+        <h2>家族情報入力</h2>
+
+        <!-- 祖父母世代 -->
+        <div class="generation">
+          <h3>祖父母世代</h3>
+          <div class="person-input">
+            <div>
+              <label>父方祖父 名前</label>
+              <input
+                type="text"
+                id="paternal_grandfather_name"
+                placeholder="例：田中太郎"
+              />
+            </div>
+            <div>
+              <label>生年</label>
+              <input
+                type="number"
+                id="paternal_grandfather_birth"
+                placeholder="例：1930"
+              />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="paternal_grandfather_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="person-input">
+            <div>
+              <label>父方祖母 名前</label>
+              <input
+                type="text"
+                id="paternal_grandmother_name"
+                placeholder="例：田中花子"
+              />
+            </div>
+            <div>
+              <label>生年</label>
+              <input
+                type="number"
+                id="paternal_grandmother_birth"
+                placeholder="例：1935"
+              />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="paternal_grandmother_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="person-input">
+            <div>
+              <label>母方祖父 名前</label>
+              <input
+                type="text"
+                id="maternal_grandfather_name"
+                placeholder="例：佐藤一郎"
+              />
+            </div>
+            <div>
+              <label>生年</label>
+              <input
+                type="number"
+                id="maternal_grandfather_birth"
+                placeholder="例：1928"
+              />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="maternal_grandfather_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="person-input">
+            <div>
+              <label>母方祖母 名前</label>
+              <input
+                type="text"
+                id="maternal_grandmother_name"
+                placeholder="例：佐藤美子"
+              />
+            </div>
+            <div>
+              <label>生年</label>
+              <input
+                type="number"
+                id="maternal_grandmother_birth"
+                placeholder="例：1932"
+              />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="maternal_grandmother_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 親世代 -->
+        <div class="generation">
+          <h3>親世代</h3>
+          <div class="person-input">
+            <div>
+              <label>父 名前</label>
+              <input type="text" id="father_name" placeholder="例：田中次郎" />
+            </div>
+            <div>
+              <label>生年</label>
+              <input type="number" id="father_birth" placeholder="例：1955" />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="father_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="person-input">
+            <div>
+              <label>母 名前</label>
+              <input type="text" id="mother_name" placeholder="例：田中恵子" />
+            </div>
+            <div>
+              <label>生年</label>
+              <input type="number" id="mother_birth" placeholder="例：1958" />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="mother_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 本人・兄弟世代 -->
+        <div class="generation">
+          <h3>本人・兄弟世代</h3>
+          <div class="person-input">
+            <div>
+              <label>本人 名前</label>
+              <input type="text" id="self_name" placeholder="例：田中三郎" />
+            </div>
+            <div>
+              <label>性別</label>
+              <select id="self_gender">
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+              </select>
+            </div>
+            <div>
+              <label>生年</label>
+              <input type="number" id="self_birth" placeholder="例：1985" />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="self_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="siblings-container">
+            <!-- 兄弟姉妹の入力フィールドが動的に追加される -->
+          </div>
+
+          <div style="text-align: center; margin: 15px 0;">
+            <button type="button" onclick="addSibling()">兄弟姉妹を追加</button>
+          </div>
+
+          <div class="person-input">
+            <div>
+              <label>配偶者 名前</label>
+              <input type="text" id="spouse_name" placeholder="例：田中直子" />
+            </div>
+            <div>
+              <label>性別</label>
+              <select id="spouse_gender">
+                <option value="">選択してください</option>
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+              </select>
+            </div>
+            <div>
+              <label>生年</label>
+              <input type="number" id="spouse_birth" placeholder="例：1987" />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="spouse_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子世代 -->
+        <div class="generation">
+          <h3>子世代</h3>
+          <div class="person-input">
+            <div>
+              <label>長子 名前</label>
+              <input type="text" id="child1_name" placeholder="例：田中健太" />
+            </div>
+            <div>
+              <label>性別</label>
+              <select id="child1_gender">
+                <option value="">選択してください</option>
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+              </select>
+            </div>
+            <div>
+              <label>生年</label>
+              <input type="number" id="child1_birth" placeholder="例：2010" />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="child1_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="person-input">
+            <div>
+              <label>第二子 名前</label>
+              <input type="text" id="child2_name" placeholder="例：田中彩香" />
+            </div>
+            <div>
+              <label>性別</label>
+              <select id="child2_gender">
+                <option value="">選択してください</option>
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+              </select>
+            </div>
+            <div>
+              <label>生年</label>
+              <input type="number" id="child2_birth" placeholder="例：2013" />
+            </div>
+            <div>
+              <label>状態</label>
+              <select id="child2_status">
+                <option value="alive">生存</option>
+                <option value="deceased">故人</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center">
+          <button onclick="generateGenogram()">ジェノグラム作成</button>
+          <button class="clear-btn" onclick="clearInputs()">入力クリア</button>
+        </div>
+
+        <div class="legend">
+          <h4>記号の説明</h4>
+          <div class="legend-item">
+            <span class="symbol male"></span>男性（四角）
+          </div>
+          <div class="legend-item">
+            <span class="symbol female"></span>女性（円）
+          </div>
+          <div class="legend-item">
+            <span class="symbol deceased"></span>故人（グレー）
+          </div>
+        </div>
+      </div>
+
+      <div class="genogram-panel">
+        <h2>ジェノグラム</h2>
+        <svg id="genogram-svg" viewBox="0 0 800 600">
+          <text x="400" y="300" text-anchor="middle" fill="#ccc" font-size="18">
+            情報を入力して「ジェノグラム作成」ボタンを押してください
+          </text>
+        </svg>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
