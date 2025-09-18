@@ -266,6 +266,7 @@ function drawPerson(svg, person, position, scale = 1) {
   const { x, y } = position;
   const isDeceased = person.status === "deceased";
   const isMale = person.gender === "male";
+  const isSelf = person.id === "self"; 
 
   let shape;
   let fillColor = isDeceased ? "#D3D3D3" : isMale ? "#87CEEB" : "#FFB6C1";
@@ -276,14 +277,26 @@ function drawPerson(svg, person, position, scale = 1) {
 
   if (isMale) {
     // 男性：四角形
-    shape = `<rect x="${x - shapeSize}" y="${y - shapeSize}" width="${shapeSize * 2}" height="${shapeSize * 2}" 
+    shape += `<rect x="${x - shapeSize}" y="${y - shapeSize}" width="${shapeSize * 2}" height="${shapeSize * 2}" 
                     fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
+
+    if (isSelf) {
+      // 本人は二重線
+      shape += `<rect x="${x - shapeSize - 3}" y="${y - shapeSize - 3}" width="${(shapeSize * 2) + 6}" height="${(shapeSize * 2) + 6}" 
+                      fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
+    }
   } else {
     // 女性：円形
-    shape = `<circle cx="${x}" cy="${y}" r="${shapeSize}" 
+    shape += `<circle cx="${x}" cy="${y}" r="${shapeSize}" 
                     fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
-  }
 
+    if (isSelf) {
+      // 本人は二重線
+      shape += `<circle cx="${x}" cy="${y}" r="${shapeSize + 3}" 
+                      fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
+    }
+  }
+  
   // 故人の場合はX印を追加
   let deceased = "";
   if (isDeceased) {
