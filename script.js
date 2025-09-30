@@ -1,54 +1,79 @@
 let siblingCount = 0;
+let paternalUncleAuntCount = 1;
+let maternalUncleAuntCount = 1;
 
 function addSibling() {
   if (siblingCount >= 10) {
-    alert('兄弟姉妹は最大10人まで追加できます。');
+    alert("兄弟姉妹は最大10人まで追加できます。");
     return;
   }
-  
+
   siblingCount++;
-  const container = document.getElementById('siblings-container');
-  
-  const siblingDiv = document.createElement('div');
-  siblingDiv.className = 'person-input';
+  const container = document.getElementById("siblings-container");
+
+  const siblingDiv = document.createElement("div");
+  siblingDiv.className = "person-input";
   siblingDiv.id = `sibling${siblingCount}-container`;
-  
+
   siblingDiv.innerHTML = `
     <button type="button" class="remove-btn" onclick="removeSibling(${siblingCount})">削除</button>
     <div>
       <label>兄弟姉妹${siblingCount} 名前</label>
       <input
         type="text"
-        id="sibling${siblingCount}_name"
+        id="B${siblingCount}_name"
         placeholder="例：田中和子"
       />
     </div>
     <div>
       <label>性別</label>
-      <select id="sibling${siblingCount}_gender">
+      <select id="B${siblingCount}_gender">
         <option value="">選択してください</option>
         <option value="male">男性</option>
         <option value="female">女性</option>
       </select>
     </div>
     <div>
-      <label>生年</label>
-      <input type="number" id="sibling${siblingCount}_birth" placeholder="例：1983" />
-    </div>
-    <div>
       <label>状態</label>
-      <select id="sibling${siblingCount}_status">
+      <select id="B${siblingCount}_status">
         <option value="alive">生存</option>
         <option value="deceased">故人</option>
       </select>
     </div>
+    <div>
+      <label>生年(西暦)</label>
+      <input type="number" id="B${siblingCount}_birth" min="1900" value="1980" placeholder="例：2010" />
+    </div>
+    <div>
+      <label>生年(和暦)</label>
+      <div class="birth-inputs">
+        <select class="j-calendar" id="B${siblingCount}_birth_era">
+          <option value="">選択してください</option>
+          <option value="明治">明治</option>
+          <option value="大正">大正</option>
+          <option value="昭和">昭和</option>
+          <option value="平成">平成</option>
+          <option value="令和">令和</option>
+        </select>
+        <input
+          class="j-calendar"
+          type="number"
+          id="B${siblingCount}_birth_year_jp"
+          placeholder="例：30"
+          inputmode="numeric"
+          style="ime-mode: disabled"
+        />
+      </div>
+    </div>
   `;
-  
+
   container.appendChild(siblingDiv);
 }
 
 function removeSibling(siblingId) {
-  const siblingContainer = document.getElementById(`sibling${siblingId}-container`);
+  const siblingContainer = document.getElementById(
+    `sibling${siblingId}-container`
+  );
   if (siblingContainer) {
     siblingContainer.remove();
   }
@@ -56,24 +81,25 @@ function removeSibling(siblingId) {
 
 function collectPersonData() {
   const people = [];
-  
+
   // 固定の家族メンバー（性別固定）
   const fixedMembers = [
-    { id: 'paternal_grandfather', gender: 'male' },
-    { id: 'paternal_grandmother', gender: 'female' },
-    { id: 'maternal_grandfather', gender: 'male' },
-    { id: 'maternal_grandmother', gender: 'female' },
-    { id: 'father', gender: 'male' },
-    { id: 'mother', gender: 'female' }
+    { id: "ff", gender: "male" },
+    { id: "fm", gender: "female" },
+    { id: "mf", gender: "male" },
+    { id: "mm", gender: "female" },
+    { id: "lff", gender: "male" },
+    { id: "lfm", gender: "female" },
+    { id: "lmf", gender: "male" },
+    { id: "lmm", gender: "female" },
+    { id: "f", gender: "male" },
+    { id: "m", gender: "female" },
+    { id: "lf", gender: "male" },
+    { id: "lm", gender: "female" },
   ];
-  
+
   // 性別選択可能なメンバー
-  const selectableMembers = [
-    'self',
-    'spouse',
-    'child1',
-    'child2'
-  ];
+  const selectableMembers = ["p", "s", "c1", "c2"];
 
   // 固定メンバーの処理
   fixedMembers.forEach((member) => {
@@ -83,7 +109,7 @@ function collectPersonData() {
         id: member.id,
         name: nameEl.value,
         gender: member.gender,
-        birth: document.getElementById(`${member.id}_birth`).value,
+        birth: document.getElementById(`${member.id}_birth_year`).value,
         status: document.getElementById(`${member.id}_status`).value,
       });
     }
@@ -97,22 +123,36 @@ function collectPersonData() {
         id: id,
         name: nameEl.value,
         gender: document.getElementById(`${id}_gender`).value,
-        birth: document.getElementById(`${id}_birth`).value,
+        birth: document.getElementById(`${id}_birth_year`).value,
         status: document.getElementById(`${id}_status`).value,
       });
     }
   });
 
-  // 動的に追加された兄弟姉妹の処理
+  // 動的に追加された本人の兄弟姉妹の処理
   for (let i = 1; i <= 10; i++) {
-    const nameEl = document.getElementById(`sibling${i}_name`);
+    const nameEl = document.getElementById(`B${i}_name`);
     if (nameEl && nameEl.value.trim()) {
       people.push({
-        id: `sibling${i}`,
+        id: `B${i}`,
         name: nameEl.value,
-        gender: document.getElementById(`sibling${i}_gender`).value,
-        birth: document.getElementById(`sibling${i}_birth`).value,
-        status: document.getElementById(`sibling${i}_status`).value,
+        gender: document.getElementById(`B${i}_gender`).value,
+        birth: document.getElementById(`B${i}_birth_year`).value,
+        status: document.getElementById(`B${i}_status`).value,
+      });
+    }
+  }
+
+  // 動的に追加された配偶者の兄弟姉妹の処理
+  for (let i = 1; i <= 10; i++) {
+    const nameEl = document.getElementById(`LB${i}_name`);
+    if (nameEl && nameEl.value.trim()) {
+      people.push({
+        id: `LB${i}`,
+        name: nameEl.value,
+        gender: document.getElementById(`LB${i}_gender`).value,
+        birth: document.getElementById(`LB${i}_birth_year`).value,
+        status: document.getElementById(`LB${i}_status`).value,
       });
     }
   }
@@ -139,33 +179,33 @@ function generateGenogram() {
 function drawGenogram(svg, people) {
   const positions = {
     // 祖父母世代 (y=80)
-    paternal_grandfather: { x: 150, y: 80 },
-    paternal_grandmother: { x: 250, y: 80 },
-    maternal_grandfather: { x: 450, y: 80 },
-    maternal_grandmother: { x: 550, y: 80 },
+    ff: { x: 150, y: 80 },
+    fm: { x: 250, y: 80 },
+    mf: { x: 450, y: 80 },
+    mm: { x: 550, y: 80 },
 
     // 親世代 (y=200)
-    father: { x: 200, y: 200 },
-    mother: { x: 300, y: 200 },
+    f: { x: 200, y: 200 },
+    m: { x: 300, y: 200 },
 
     // 本人世代 (y=320)
-    self: { x: 300, y: 320 },
-    spouse: { x: 400, y: 320 },
+    p: { x: 300, y: 320 },
+    s: { x: 400, y: 320 },
 
     // 子世代 (y=440)
-    child1: { x: 330, y: 440 },
-    child2: { x: 370, y: 440 },
+    c1: { x: 330, y: 440 },
+    c2: { x: 370, y: 440 },
   };
 
   // 兄弟姉妹のポジションを動的に計算
-  const siblings = people.filter(p => p.id.startsWith('sibling'));
+  const siblings = people.filter((p) => p.id.startsWith("sibling"));
   const siblingBaseX = 100;
   const siblingSpacing = 80;
-  
+
   siblings.forEach((sibling, index) => {
     positions[sibling.id] = {
-      x: siblingBaseX + (index * siblingSpacing),
-      y: 320
+      x: siblingBaseX + index * siblingSpacing,
+      y: 320,
     };
   });
 
@@ -212,8 +252,8 @@ function drawRelationships(svg, people, positions) {
   ];
 
   // 兄弟姉妹の親子関係を追加
-  const siblings = people.filter(p => p.id.startsWith('sibling'));
-  siblings.forEach(sibling => {
+  const siblings = people.filter((p) => p.id.startsWith("sibling"));
+  siblings.forEach((sibling) => {
     parentChildRelations.push([["father", "mother"], sibling.id]);
   });
 
@@ -266,23 +306,27 @@ function drawPerson(svg, person, position, scale = 1) {
   const { x, y } = position;
   const isDeceased = person.status === "deceased";
   const isMale = person.gender === "male";
-  const isSelf = person.id === "self"; 
+  const isSelf = person.id === "self";
 
   let shape;
   let fillColor = isDeceased ? "#D3D3D3" : isMale ? "#87CEEB" : "#FFB6C1";
   let strokeColor = isDeceased ? "#696969" : isMale ? "#4682B4" : "#DC143C";
-  
+
   const shapeSize = 20 * scale;
   const strokeWidth = Math.max(1, 2 * scale);
 
   if (isMale) {
     // 男性：四角形
-    shape += `<rect x="${x - shapeSize}" y="${y - shapeSize}" width="${shapeSize * 2}" height="${shapeSize * 2}" 
+    shape += `<rect x="${x - shapeSize}" y="${y - shapeSize}" width="${
+      shapeSize * 2
+    }" height="${shapeSize * 2}" 
                     fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
 
     if (isSelf) {
       // 本人は二重線
-      shape += `<rect x="${x - shapeSize - 3}" y="${y - shapeSize - 3}" width="${(shapeSize * 2) + 6}" height="${(shapeSize * 2) + 6}" 
+      shape += `<rect x="${x - shapeSize - 3}" y="${
+        y - shapeSize - 3
+      }" width="${shapeSize * 2 + 6}" height="${shapeSize * 2 + 6}" 
                       fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
     }
   } else {
@@ -296,23 +340,27 @@ function drawPerson(svg, person, position, scale = 1) {
                       fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
     }
   }
-  
+
   // 故人の場合はX印を追加
   let deceased = "";
   if (isDeceased) {
     const xSize = 15 * scale;
     const xStroke = Math.max(1, 2 * scale);
-    deceased = `<line x1="${x - xSize}" y1="${y - xSize}" x2="${x + xSize}" y2="${y + xSize}" stroke="#000" stroke-width="${xStroke}"/>
-                <line x1="${x - xSize}" y1="${y + xSize}" x2="${x + xSize}" y2="${y - xSize}" stroke="#000" stroke-width="${xStroke}"/>`;
+    deceased = `<line x1="${x - xSize}" y1="${y - xSize}" x2="${
+      x + xSize
+    }" y2="${y + xSize}" stroke="#000" stroke-width="${xStroke}"/>
+                <line x1="${x - xSize}" y1="${y + xSize}" x2="${
+      x + xSize
+    }" y2="${y - xSize}" stroke="#000" stroke-width="${xStroke}"/>`;
   }
 
   // 名前
-  const nameY = y + (40 * scale);
+  const nameY = y + 40 * scale;
   const fontSize = Math.max(8, 12 * scale);
   const name = `<text x="${x}" y="${nameY}" text-anchor="middle" font-size="${fontSize}" font-weight="bold">${person.name}</text>`;
 
   // 生年
-  const birthY = nameY + (15 * scale);
+  const birthY = nameY + 15 * scale;
   const birthFontSize = Math.max(6, 10 * scale);
   const birth = person.birth
     ? `<text x="${x}" y="${birthY}" text-anchor="middle" font-size="${birthFontSize}" fill="#666">${person.birth}年生</text>`
@@ -332,11 +380,149 @@ function clearInputs() {
   });
 
   // 動的に追加された兄弟姉妹の入力フィールドをクリア
-  const siblingsContainer = document.getElementById('siblings-container');
-  siblingsContainer.innerHTML = '';
+  const siblingsContainer = document.getElementById("siblings-container");
+  siblingsContainer.innerHTML = "";
   siblingCount = 0;
 
   const svg = document.getElementById("genogram-svg");
   svg.innerHTML =
     '<text x="400" y="300" text-anchor="middle" fill="#ccc" font-size="18">情報を入力して「ジェノグラム作成」ボタンを押してください</text>';
 }
+
+function addPaternalUncleAunt() {
+  paternalUncleAuntCount++;
+  const container = document.getElementById("paternal-uncles-aunts-container");
+
+  const div = document.createElement("div");
+  div.className = "person-input";
+  div.innerHTML = `
+    <div>
+      <label>父方叔父叔母 ${paternalUncleAuntCount} 名前</label>
+      <input type="text" id="paternal_uncleAunt${paternalUncleAuntCount}_name" placeholder="例：田中義雄" />
+    </div>
+    <div>
+      <label>性別</label>
+      <select id="paternal_uncleAunt${paternalUncleAuntCount}_gender">
+        <option value="male">男性</option>
+        <option value="female">女性</option>
+      </select>
+    </div>
+    <div>
+      <label>生年</label>
+      <input type="number" id="paternal_uncleAunt${paternalUncleAuntCount}_birth" placeholder="例：1970" />
+    </div>
+    <div>
+      <label>状態</label>
+      <select id="paternal_uncleAunt${paternalUncleAuntCount}_status">
+        <option value="alive">生存</option>
+        <option value="deceased">故人</option>
+      </select>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function addMaternalUncleAunt() {
+  maternalUncleAuntCount++;
+  const container = document.getElementById("maternal-uncles-aunts-container");
+
+  const div = document.createElement("div");
+  div.className = "person-input";
+  div.innerHTML = `
+    <div>
+      <label>母方叔父叔母 ${maternalUncleAuntCount} 名前</label>
+      <input type="text" id="maternal_uncleAunt${maternalUncleAuntCount}_name" placeholder="例：佐藤義雄" />
+    </div>
+    <div>
+      <label>性別</label>
+      <select id="maternal_uncleAunt${maternalUncleAuntCount}_gender">
+        <option value="male">男性</option>
+        <option value="female">女性</option>
+      </select>
+    </div>
+    <div>
+      <label>生年</label>
+      <input type="number" id="maternal_uncleAunt${maternalUncleAuntCount}_birth" placeholder="例：1972" />
+    </div>
+    <div>
+      <label>状態</label>
+      <select id="maternal_uncleAunt${maternalUncleAuntCount}_status">
+        <option value="alive">生存</option>
+        <option value="deceased">故人</option>
+      </select>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+// 和暦・西暦変換機能
+const eras = {
+  明治: 1868,
+  大正: 1912,
+  昭和: 1926,
+  平成: 1989,
+  令和: 2019,
+};
+
+// 西暦 → 和暦
+function toWareki(year) {
+  const entries = Object.entries(eras);
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const [era, start] = entries[i];
+    if (year >= start) {
+      return { era, jp: year - start + 1 };
+    }
+  }
+  return { era: "", jp: "" };
+}
+
+// 和暦 → 西暦
+function toSeireki(era, jp) {
+  if (!era || !eras[era] || !jp) return "";
+  return eras[era] + (parseInt(jp, 10) - 1);
+}
+
+// ------------------------------------
+// イベント委譲（静的 + 動的要素に対応）
+// ------------------------------------
+
+document.addEventListener("input", (e) => {
+  // 西暦 → 和暦
+  if (e.target.matches("input[id$='_birth_year']")) {
+    const prefix = e.target.id.replace("_birth_year", "");
+    const year = parseInt(e.target.value, 10);
+    if (!year) return;
+
+    const { era, jp } = toWareki(year);
+    document.getElementById(`${prefix}_birth_era`).value = era;
+    document.getElementById(`${prefix}_birth_year_jp`).value = jp || "";
+
+    console.log(`[${prefix}] 西暦入力: ${year} → ${era}${jp}年`);
+  }
+
+  // 和暦年 → 西暦
+  if (e.target.matches("input[id$='_birth_year_jp']")) {
+    const prefix = e.target.id.replace("_birth_year_jp", "");
+    const jp = parseInt(e.target.value, 10);
+    const era = document.getElementById(`${prefix}_birth_era`).value;
+    const year = toSeireki(era, jp);
+    document.getElementById(`${prefix}_birth_year`).value = year || "";
+
+    console.log(`[${prefix}] 和暦年入力: ${era}${jp}年 → 西暦${year}`);
+  }
+});
+
+document.addEventListener("change", (e) => {
+  // 元号変更 → 西暦
+  if (e.target.matches("select[id$='_birth_era']")) {
+    const prefix = e.target.id.replace("_birth_era", "");
+    const jp = parseInt(
+      document.getElementById(`${prefix}_birth_year_jp`).value,
+      10
+    );
+    const year = toSeireki(e.target.value, jp);
+    document.getElementById(`${prefix}_birth_year`).value = year || "";
+
+    console.log(`[${prefix}] 元号変更: ${e.target.value}${jp}年 → 西暦${year}`);
+  }
+});

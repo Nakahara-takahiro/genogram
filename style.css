@@ -74,11 +74,35 @@ body {
     box-sizing: border-box;
 }
 
+
 .person-input input:focus,
 .person-input select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.person-input .j-calendar {
+    width: 45%;
+    display: inline-block;
+}
+
+.birth-inputs,
+.living-together {
+    display: flex;
+    gap: 5px;
+        align-items: center;
+}
+
+.living-together label,
+.living-together input {
+    display: inline-block;
+    width: auto;
+
+}
+
+.person-input select {
+    width: 100%;
 }
 
 .full-width {
