@@ -65,15 +65,18 @@
             </div>
           </div>
 
-          <div id="siblings-container">
+          <div id="siblings-container-self">
             <!-- 兄弟姉妹の入力フィールドが動的に追加される -->
           </div>
 
           <div style="text-align: center; margin: 15px 0">
-            <button type="button" onclick="addSibling()">兄弟姉妹を追加</button>
+            <button type="button" onclick="addPerson('B', 'siblings-container-self', '本人の兄弟姉妹')">
+              兄弟姉妹を追加
+            </button>
           </div>
         </div>
 
+        <!-- 配偶者・兄弟姉妹世代 -->
         <details class="generation">
           <summary><h3>配偶者・兄弟姉妹世代</h3></summary>
           <div class="person-input">
@@ -137,12 +140,12 @@
               <label>備考</label><input type="text" id="memo_s" />
             </div>
           </div>
-          <div id="siblings-container">
+          <div id="siblings-container-spouse">
             <!-- 兄弟姉妹の入力フィールドが動的に追加される -->
           </div>
 
           <div style="text-align: center; margin: 15px 0">
-            <button type="button" onclick="addSibling()">
+            <button type="button" onclick="addPerson('LB', 'siblings-container-spouse', '本人の兄弟姉妹')">
               配偶者の兄弟姉妹を追加
             </button>
           </div>
@@ -373,128 +376,73 @@
         <!-- 本人の子世代 -->
         <details class="generation">
           <summary><h3>本人の子世代</h3></summary>
-          <div class="person-input">
-            <div>
-              <label>長子 名前</label>
-              <input type="text" id="c1_name" placeholder="例：田中健太" />
-            </div>
-            <div>
-              <label>性別</label>
-              <select id="c1_gender">
-                <option value="">選択してください</option>
-                <option value="male">男性</option>
-                <option value="female">女性</option>
-              </select>
-            </div>
-            <div>
-              <label>状態</label>
-              <select id="c1_status">
-                <option value="alive">生存</option>
-                <option value="deceased">故人</option>
-              </select>
-            </div>
 
-            <div>
-              <label>生年(西暦)</label>
-              <input
-                type="number"
-                id="c1_birth_year"
-                min="1900"
-                value="1980"
-                placeholder="例：2010"
-              />
-            </div>
-            <div>
-              <label>生年(和暦)</label>
-              <div class="birth-inputs">
-                <select class="j-calendar" id="c1_birth_era">
+          <!-- 長子-->
+          <details class="generation" id="child1-container" open>
+            <summary><h4>長子</h4></summary>
+            <div class="person-input">
+              <div>
+                <label>長子 名前</label>
+                <input type="text" id="C1_name" placeholder="例：田中健太" />
+              </div>
+              <div>
+                <label>性別</label>
+                <select id="C1_gender">
                   <option value="">選択してください</option>
-                  <option value="明治">明治</option>
-                  <option value="大正">大正</option>
-                  <option value="昭和">昭和</option>
-                  <option value="平成">平成</option>
-                  <option value="令和">令和</option>
+                  <option value="male">男性</option>
+                  <option value="female">女性</option>
                 </select>
+              </div>
+              <div>
+                <label>状態</label>
+                <select id="C1_status">
+                  <option value="alive">生存</option>
+                  <option value="deceased">故人</option>
+                </select>
+              </div>
+              <div>
+                <label>生年(西暦)</label>
                 <input
-                  class="j-calendar"
                   type="number"
-                  id="c1_birth_year_jp"
-                  placeholder="例：30"
-                  inputmode="numeric"
-                  style="ime-mode: disabled"
+                  id="C1_birth_year"
+                  min="1900"
+                  placeholder="例：2010"
                 />
               </div>
-            </div>
-
-            <div class="living-together">
-              <label>同居</label><input type="checkbox" id="livein_c1" />
-            </div>
-
-            <div class="memo">
-              <label>備考</label><input type="text" id="memo_c1" />
-            </div>
-          </div>
-
-          <div class="person-input">
-            <div>
-              <label>第二子 名前</label>
-              <input type="text" id="c2_name" placeholder="例：田中彩香" />
-            </div>
-            <div>
-              <label>性別</label>
-              <select id="c2_gender">
-                <option value="">選択してください</option>
-                <option value="male">男性</option>
-                <option value="female">女性</option>
-              </select>
-            </div>
-            <div>
-              <label>状態</label>
-              <select id="c2_status">
-                <option value="alive">生存</option>
-                <option value="deceased">故人</option>
-              </select>
-            </div>
-            <div>
-              <label>生年(西暦)</label>
-              <input
-                type="number"
-                id="c2_birth_year"
-                min="1900"
-                value="1980"
-                placeholder="例：2013"
-              />
-            </div>
-
-            <div>
-              <label>生年(和暦)</label>
-              <div class="birth-inputs">
-                <select class="j-calendar" id="c2_birth_era">
-                  <option value="">選択してください</option>
-                  <option value="明治">明治</option>
-                  <option value="大正">大正</option>
-                  <option value="昭和">昭和</option>
-                  <option value="平成">平成</option>
-                  <option value="令和">令和</option>
-                </select>
-                <input
-                  class="j-calendar"
-                  type="number"
-                  id="c2_birth_year_jp"
-                  placeholder="例：30"
-                  inputmode="numeric"
-                  style="ime-mode: disabled"
-                />
+              <div>
+                <label>生年(和暦)</label>
+                <div class="birth-inputs">
+                  <select class="j-calendar" id="C1_birth_era">
+                    <option value="">選択してください</option>
+                    <option value="明治">明治</option>
+                    <option value="大正">大正</option>
+                    <option value="昭和">昭和</option>
+                    <option value="平成">平成</option>
+                    <option value="令和">令和</option>
+                  </select>
+                  <input
+                    class="j-calendar"
+                    type="number"
+                    id="C1_birth_year_jp"
+                    placeholder="例：30"
+                  />
+                </div>
+              </div>
+              <div class="living-together">
+                <label>同居</label><input type="checkbox" id="C1_livein" />
+              </div>
+              <div class="memo">
+                <label>備考</label><input type="text" id="C1_memo" />
               </div>
             </div>
+          </details>
 
-            <div class="living-together">
-              <label>同居</label><input type="checkbox" id="livein_c2" />
-            </div>
+          <!-- 動的に第2子以降をここに追加 -->
+          <div id="children-container"></div>
 
-            <div class="memo">
-              <label>備考</label><input type="text" id="memo_c2" />
-            </div>
+          <!-- 子供追加ボタン -->
+          <div style="text-align: center; margin: 15px 0">
+            <button type="button" onclick="addPerson('C', 'children-container', '子', true)">子供を追加</button>
           </div>
         </details>
 

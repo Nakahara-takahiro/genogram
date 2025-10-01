@@ -2,32 +2,43 @@ let siblingCount = 0;
 let paternalUncleAuntCount = 1;
 let maternalUncleAuntCount = 1;
 
-function addSibling() {
-  if (siblingCount >= 10) {
-    alert("兄弟姉妹は最大10人まで追加できます。");
+let selfSiblingCount = 0;
+let spouseSiblingCount = 0;
+
+function addSibling(type = "self") {
+  let count, prefix, containerId, labelPrefix;
+
+  if (type === "self") {
+    count = ++selfSiblingCount;
+    prefix = "B";
+    containerId = "siblings-container-self";
+    labelPrefix = "兄弟姉妹";
+  } else if (type === "spouse") {
+    count = ++spouseSiblingCount;
+    prefix = "LB";
+    containerId = "siblings-container-spouse";
+    labelPrefix = "配偶者の兄弟姉妹";
+  }
+
+  if (count > 10) {
+    alert(labelPrefix + "は最大10人まで追加できます。");
     return;
   }
 
-  siblingCount++;
-  const container = document.getElementById("siblings-container");
-
+  const container = document.getElementById(containerId);
   const siblingDiv = document.createElement("div");
   siblingDiv.className = "person-input";
-  siblingDiv.id = `sibling${siblingCount}-container`;
+  siblingDiv.id = `${prefix}${count}-container`;
 
   siblingDiv.innerHTML = `
-    <button type="button" class="remove-btn" onclick="removeSibling(${siblingCount})">削除</button>
+    <button type="button" class="remove-btn" onclick="removeSibling('${type}', ${count})">削除</button>
     <div>
-      <label>兄弟姉妹${siblingCount} 名前</label>
-      <input
-        type="text"
-        id="B${siblingCount}_name"
-        placeholder="例：田中和子"
-      />
+      <label>${labelPrefix}${count} 名前</label>
+      <input type="text" id="${prefix}${count}_name" placeholder="例：山田花子" />
     </div>
     <div>
       <label>性別</label>
-      <select id="B${siblingCount}_gender">
+      <select id="${prefix}${count}_gender">
         <option value="">選択してください</option>
         <option value="male">男性</option>
         <option value="female">女性</option>
@@ -35,19 +46,19 @@ function addSibling() {
     </div>
     <div>
       <label>状態</label>
-      <select id="B${siblingCount}_status">
+      <select id="${prefix}${count}_status">
         <option value="alive">生存</option>
         <option value="deceased">故人</option>
       </select>
     </div>
     <div>
       <label>生年(西暦)</label>
-      <input type="number" id="B${siblingCount}_birth" min="1900" value="1980" placeholder="例：2010" />
+      <input type="number" id="${prefix}${count}_birth_year" min="1900" placeholder="例：1990" />
     </div>
     <div>
       <label>生年(和暦)</label>
       <div class="birth-inputs">
-        <select class="j-calendar" id="B${siblingCount}_birth_era">
+        <select class="j-calendar" id="${prefix}${count}_birth_era">
           <option value="">選択してください</option>
           <option value="明治">明治</option>
           <option value="大正">大正</option>
@@ -55,29 +66,67 @@ function addSibling() {
           <option value="平成">平成</option>
           <option value="令和">令和</option>
         </select>
-        <input
-          class="j-calendar"
-          type="number"
-          id="B${siblingCount}_birth_year_jp"
-          placeholder="例：30"
-          inputmode="numeric"
-          style="ime-mode: disabled"
-        />
+        <input class="j-calendar" type="number" id="${prefix}${count}_birth_year_jp" placeholder="例：30" />
       </div>
     </div>
+    <div class="living-together">
+      <label>同居</label><input type="checkbox" id="${prefix}${count}_livein" />
+    </div>
+    <div class="memo">
+      <label>備考</label><input type="text" id="${prefix}${count}_memo" />
+    </div>
   `;
-
   container.appendChild(siblingDiv);
 }
 
-function removeSibling(siblingId) {
-  const siblingContainer = document.getElementById(
-    `sibling${siblingId}-container`
-  );
+// 兄弟姉妹削除
+function removeSibling(type, index) {
+  const prefix = (type === "self") ? "B" : "LB";
+  const containerId = (type === "self") ? "siblings-container-self" : "siblings-container-spouse";
+  const siblingContainer = document.getElementById(`${prefix}${index}-container`);
+
   if (siblingContainer) {
     siblingContainer.remove();
   }
+
+  // 残りの兄弟姉妹を取得
+  const container = document.getElementById(containerId);
+  const siblings = container.querySelectorAll(".person-input");
+
+  siblings.forEach((el, i) => {
+    const newIndex = i + 1;
+    el.id = `${prefix}${newIndex}-container`;
+
+    // 名前ラベル更新（1つ目のlabelが「名前」）
+    const nameLabel = el.querySelector("div label");
+    if (nameLabel) {
+      nameLabel.textContent = (type === "self" ? "兄弟姉妹" : "配偶者の兄弟姉妹") + newIndex + " 名前";
+    }
+
+    // 各 input/select の id を更新
+    el.querySelectorAll("input, select").forEach((input) => {
+      if (input.id.includes(prefix)) {
+        const parts = input.id.split("_"); // 例: B2_name → ["B2","name"]
+        input.id = `${prefix}${newIndex}_${parts[1]}`;
+      }
+    });
+
+    // 削除ボタンの onclick 更新
+    const removeBtn = el.querySelector(".remove-btn");
+    if (removeBtn) {
+      removeBtn.setAttribute("onclick", `removeSibling('${type}', ${newIndex})`);
+    }
+  });
+
+  // カウント更新
+  if (type === "self") {
+    selfSiblingCount = siblings.length;
+  } else {
+    spouseSiblingCount = siblings.length;
+  }
 }
+
+
 
 function collectPersonData() {
   const people = [];
