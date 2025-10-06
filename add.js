@@ -40,17 +40,37 @@ let counters = {};
 
 // 人追加
 function addPerson(prefix, containerId, labelPrefix, isDetails = false) {
-  // カウント管理
-  if (!counters[prefix]) counters[prefix] = 0;
-  counters[prefix]++;
-  const count = counters[prefix];
-
-  // 親コンテナ
   const container = document.getElementById(containerId);
   if (!container) {
     console.error("追加先が見つかりません:", containerId);
     return;
   }
+
+  // 現在の人数を取得
+  const persons = container.querySelectorAll(
+    isDetails ? "details.generation" : ".person-input"
+  );
+  let count = persons.length + 1;
+
+  // 人数上限チェック
+  const MAX_COUNT = 5;
+
+  if (prefix === "C") {
+    // 長子（C1）が固定で存在するためC2スタート
+    count += 1;
+    if (count > MAX_COUNT) {
+      alert("子供は最大10名まで追加できます。");
+      return;
+    }
+  } else if (prefix === "B" || prefix === "LB") {
+    if (count > MAX_COUNT) {
+      alert(labelPrefix + "は最大10名まで追加できます。");
+      return;
+    }
+  }
+
+  // カウント更新
+  counters[prefix] = count;
 
   // 子ども世代などは details で囲む
   const wrapper = document.createElement(isDetails ? "details" : "div");
@@ -65,7 +85,7 @@ function addPerson(prefix, containerId, labelPrefix, isDetails = false) {
 
   const content = document.createElement("div");
   content.innerHTML = `
-    <button type="button" class="remove-btn" onclick="removePerson('${prefix}', ${count}, '${containerId}', ${isDetails})">削除</button>
+    <button type="button" class="remove-btn" onclick="removePerson('${prefix}', ${count}, '${containerId}', ${isDetails}, '${labelPrefix}')">削除</button>
     <div>
       <label>${labelPrefix}${count} 名前</label>
       <input type="text" id="${prefix}${count}_name" placeholder="名前を入力" />
@@ -112,33 +132,43 @@ function addPerson(prefix, containerId, labelPrefix, isDetails = false) {
   `;
 
   wrapper.appendChild(content);
-  container.insertBefore(wrapper, container.lastElementChild); // 追加ボタンの上に入れる
+  container.appendChild(wrapper); // 末尾に追加
+
+  // すべての順番を整理
+  renumberPersons(prefix, containerId, labelPrefix, isDetails);
 }
 
-
 // 人削除
-function removePerson(prefix, index, containerId, isDetails) {
+function removePerson(prefix, index, containerId, isDetails, labelPrefix) {
   const target = document.getElementById(`${prefix}${index}-container`);
   if (target) target.remove();
+  renumberPersons(prefix, containerId, labelPrefix, isDetails);
+}
 
+// 共通の並び＆IDリセット処理
+function renumberPersons(prefix, containerId, labelPrefix, isDetails) {
   const container = document.getElementById(containerId);
-  const persons = container.querySelectorAll(isDetails ? "details.generation" : ".person-input");
+  const persons = container.querySelectorAll(
+    isDetails ? "details.generation" : ".person-input"
+  );
 
   persons.forEach((el, i) => {
-    const newIndex = i + 1;
+    let newIndex = i + 1;
+
+    // 子(C)の場合：C1(長子)は静的なのでC2から始まる
+    if (prefix === "C") newIndex += 1;
+
     el.id = `${prefix}${newIndex}-container`;
 
-    // summaryの見出し（子供や孫の場合）
+    // summaryタイトル（子世代など）
     const summary = el.querySelector("summary h4");
-    if (summary) summary.textContent = prefix.startsWith("C") ? `子${newIndex}` : `${prefix}${newIndex}`;
+    if (summary) summary.textContent = `${labelPrefix}${newIndex}`;
 
-    // labelの更新
+    // 名前ラベル
     const nameLabel = el.querySelector("div label");
-    if (nameLabel) {
-      nameLabel.textContent = `${prefix} ${newIndex} 名前`;
-    }
+    if (nameLabel) nameLabel.textContent = `${labelPrefix}${newIndex} 名前`;
 
-    // input/selectのid更新
+    // input/select ID更新
     el.querySelectorAll("input, select").forEach((input) => {
       if (input.id.includes(prefix)) {
         const parts = input.id.split("_");
@@ -148,10 +178,12 @@ function removePerson(prefix, index, containerId, isDetails) {
 
     // 削除ボタン更新
     const removeBtn = el.querySelector(".remove-btn");
-    if (removeBtn) {
-      removeBtn.setAttribute("onclick", `removePerson('${prefix}', ${newIndex}, '${containerId}', ${isDetails})`);
-    }
+    if (removeBtn)
+      removeBtn.setAttribute(
+        "onclick",
+        `removePerson('${prefix}', ${newIndex}, '${containerId}', ${isDetails}, '${labelPrefix}')`
+      );
   });
 
-  counters[prefix] = persons.length;
+  counters[prefix] = persons.length + (prefix === "C" ? 1 : 0);
 }

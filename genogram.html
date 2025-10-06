@@ -70,7 +70,10 @@
           </div>
 
           <div style="text-align: center; margin: 15px 0">
-            <button type="button" onclick="addPerson('B', 'siblings-container-self', '本人の兄弟姉妹')">
+            <button
+              type="button"
+              onclick="addPerson('B', 'siblings-container-self', '本人の兄弟姉妹')"
+            >
               兄弟姉妹を追加
             </button>
           </div>
@@ -145,7 +148,10 @@
           </div>
 
           <div style="text-align: center; margin: 15px 0">
-            <button type="button" onclick="addPerson('LB', 'siblings-container-spouse', '本人の兄弟姉妹')">
+            <button
+              type="button"
+              onclick="addPerson('LB', 'siblings-container-spouse', '配偶者の兄弟姉妹')"
+            >
               配偶者の兄弟姉妹を追加
             </button>
           </div>
@@ -442,7 +448,12 @@
 
           <!-- 子供追加ボタン -->
           <div style="text-align: center; margin: 15px 0">
-            <button type="button" onclick="addPerson('C', 'children-container', '子', true)">子供を追加</button>
+            <button
+              type="button"
+              onclick="addPerson('C', 'children-container', '子', true)"
+            >
+              子供を追加
+            </button>
           </div>
         </details>
 
@@ -887,6 +898,7 @@
         <div style="text-align: center">
           <button onclick="generateGenogram()">ジェノグラム作成</button>
           <button class="clear-btn" onclick="clearInputs()">入力クリア</button>
+          <button id="draw-dummy-btn" type="button">ダミーデータ描画</button>
         </div>
 
         <div class="legend">
@@ -913,5 +925,6 @@
       </div>
     </div>
     <script src="script.js"></script>
+    <script src="add.js"></script>
   </body>
 </html>
